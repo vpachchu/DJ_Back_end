@@ -33,4 +33,19 @@ public class UserServiceImpl implements UserService {
     public List<User> fetchAll() {
         return userRepository.findAll();
     }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+    @Override
+    public List <User> findUserByUsername(String username) {
+       List<User> user=userRepository.findByUsername(username);
+       if(user.isEmpty())
+       {
+           return null;
+       }
+       return user;
+    }
 }

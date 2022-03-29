@@ -11,5 +11,7 @@ public interface UserService {
     User save(User user);
     User fetchUserById(int uid);
     List <User> fetchAll();
+    void delete(User user);
+    List <User> findUserByUsername(String username);
 
 }
