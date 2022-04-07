@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import java.util.List;
 
+
 @Entity
 @Table(name="userdetails")
 public class User {
