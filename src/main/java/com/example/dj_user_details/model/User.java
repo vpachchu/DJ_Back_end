@@ -1,6 +1,9 @@
 package com.example.dj_user_details.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="userdetails")
@@ -13,12 +16,25 @@ public class User {
     private String username;
     private String password;
 
+    //diary going to handle the relationship
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List <Diary> diary;
+
     public int getuid() {
         return uid;
     }
 
     public void setuid(int uid) {
         this.uid = uid;
+    }
+
+    public List<Diary> getDiary() {
+        return diary;
+    }
+
+    public void setDiary(List<Diary> diary) {
+        this.diary = diary;
     }
 
     public String getName() {

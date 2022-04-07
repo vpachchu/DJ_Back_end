@@ -1,17 +1,18 @@
 package com.example.dj_user_details.controller;
 
+import com.example.dj_user_details.model.Diary;
 import com.example.dj_user_details.model.User;
 import com.example.dj_user_details.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
+@CrossOrigin
 public class UserController {
     @Autowired
     UserService userService;
@@ -22,8 +23,8 @@ public class UserController {
       return   userService.save(user);
     }
 
-    @RequestMapping(value="/user/{uid}",method=RequestMethod.GET)
-    public ResponseEntity<User> fetchById(@PathVariable int uid)
+    @RequestMapping(value="/user",method=RequestMethod.GET)
+    public ResponseEntity<User> fetchById(@RequestParam int uid)
     {
         User user=userService.fetchUserById(uid);
         if(user==null)
@@ -36,6 +37,11 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value="/user",method = RequestMethod.PUT)
+    public User updateUserDetails(@RequestBody User newuser,@RequestParam int uid)
+    {
+        return userService.updateUser(newuser,uid);
+    }
 
     @RequestMapping(value="/user",method=RequestMethod.DELETE)
     public void deleteUser(@RequestBody User user)
@@ -44,10 +50,23 @@ public class UserController {
     }
 
     @RequestMapping(value="/login",method=RequestMethod.GET)
-    public ResponseEntity <List<User>> getByUsername(@RequestParam String username)
+    public ResponseEntity <User> getByUsername(@RequestParam String username,@RequestParam String password)
     {
-        List <User> user=userService.findUserByUsername(username);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        List <User> userlist=userService.findUserByUsername(username);
+        User finduser= new User();
+
+        for(User user:userlist)
+        {
+            if(user.getusername().equals(username) && user.getPassword().equals(password))
+            {
+                finduser=user;
+                return ResponseEntity.ok().body(finduser);
+            }
+
+
+        }
+        return (ResponseEntity.notFound().build());
+
     }
 
     @RequestMapping(value="/fetchAll", method = RequestMethod.GET)
@@ -55,5 +74,12 @@ public class UserController {
     {
         return userService.fetchAll();
     }
+
+//    @RequestMapping(value="/userDiary",method = RequestMethod.GET)
+//    public List<Diary> getDiaryDetailsByUid(@RequestParam int uid)
+//    {
+//
+//        return userService.fetchDiaryDetailByUid(uid);
+//    }
 
 }
