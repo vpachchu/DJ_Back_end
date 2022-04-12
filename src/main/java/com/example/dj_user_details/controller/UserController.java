@@ -1,12 +1,13 @@
 package com.example.dj_user_details.controller;
 
-import com.example.dj_user_details.model.Diary;
 import com.example.dj_user_details.model.User;
 import com.example.dj_user_details.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,7 +21,12 @@ public class UserController {
 
    @RequestMapping(value ="/user",method=RequestMethod.POST)
     public User save(@RequestBody User user){
-      return   userService.save(user);
+       List<User> userExist = userService.findUserByUsername(user.getusername());
+
+       if(userExist!= null) {
+          throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,"Username already exist!");
+       }
+     return userService.save(user);
     }
 
     @RequestMapping(value="/user",method=RequestMethod.GET)
@@ -50,7 +56,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/login",method=RequestMethod.GET)
-    public ResponseEntity <User> getByUsername(@RequestParam String username,@RequestParam String password)
+    public ResponseEntity <User> getByUsernamePassword(@RequestParam String username,@RequestParam String password)
     {
         List <User> userlist=userService.findUserByUsername(username);
         User finduser= new User();
@@ -67,6 +73,21 @@ public class UserController {
         }
         return (ResponseEntity.notFound().build());
 
+    }
+
+    @RequestMapping(value = "/username",method = RequestMethod.GET)
+    public ResponseEntity<List<User>> getByUsername(@RequestParam String username)
+    {
+      List <User> user=userService.findUserByUsername(username);
+
+      if(user==null)
+      {
+         return ResponseEntity.notFound().build();
+      }
+      else
+      {
+          return ResponseEntity.ok().body(user);
+      }
     }
 
     @RequestMapping(value="/fetchAll", method = RequestMethod.GET)
