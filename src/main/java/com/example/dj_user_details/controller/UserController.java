@@ -23,6 +23,7 @@ public class UserController {
     public User save(@RequestBody User user){
        List<User> userExist = userService.findUserByUsername(user.getusername());
 
+
        if(userExist!= null) {
           throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,"Username already exist!");
        }
